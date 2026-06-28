@@ -1,0 +1,45 @@
+stages:
+  - test
+  - vulnerabilities_trivy
+  - vulnerabilities_sbom_syft_grype
+
+default:
+  image: python:3.12
+
+django_sanity:
+  stage: test
+  script:
+    - echo 'Starting tests...'
+    - python -m venv ./.venv
+    - source ./.venv/bin/activate
+    - pip install --no-cache-dir -r requirements.txt
+    - mkdir $CI_PROJECT_DIR/logging || true
+    - touch $CI_PROJECT_DIR/logging/debug.log || true
+    - python manage.py check
+    - deactivate
+    - rm -rf ./.venv
+
+vulnerabilities_trivy:
+  stage: vulnerabilities_trivy
+  image: ubuntu:24.04
+  script:
+    - echo 'Starting tests...'
+    - apt update && apt install -y gnupg curl wget unzip ca-certificates
+    - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | tee /usr/share/keyrings/trivy.gpg > /dev/null
+    - echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | tee -a /etc/apt/sources.list.d/trivy.list
+    - apt-get update
+    - apt-get install trivy -y
+    - trivy fs $CI_PROJECT_DIR --include-dev-deps --dependency-tree
+
+vulnerabilities_sbom_syft_grype:
+  stage: vulnerabilities_sbom_syft_grype
+  image: ubuntu:24.04
+  script:
+    - echo 'Starting tests...'
+    - apt update && apt install -y gnupg curl wget unzip ca-certificates
+    - curl -sSfL https://get.anchore.io/syft | sh -s -- -b /usr/local/bin
+    - curl -sSfL https://get.anchore.io/grype | sh -s -- -b /usr/local/bin
+    - rm -rf /scans || true
+    - mkdir /scans
+    - syft $CI_PROJECT_DIR -o cyclonedx-json=/scans/sbom.json
+    - grype sbom:/scans/sbom.json

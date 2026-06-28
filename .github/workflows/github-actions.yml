@@ -1,0 +1,55 @@
+name: Test
+run-name: ${{ github.actor }} is scanning the Login Flow Code 🚀
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  code:
+    runs-on: 'ubuntu-24.04'
+    steps:
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip' 
+
+      - name: Django Sanity
+        run: |
+          echo 'Starting tests...'
+          python -m venv ./.venv
+          source ./.venv/bin/activate
+          pip install --no-cache-dir -r requirements.txt
+          mkdir ${{ github.workspace }}/logging || true
+          touch ${{ github.workspace }}/logging/debug.log || true
+          python manage.py check
+          deactivate
+          rm -rf ./.venv
+
+  vulnerabilities:
+    runs-on: 'ubuntu-24.04'
+    steps:
+      - name: Vulnerabilities-Trivy
+        run: |
+          echo 'Starting env prep for testing...'
+          sudo apt update && sudo apt install -y gnupg curl wget unzip ca-certificates
+          sudo wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+          sudo echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy -y
+          trivy fs ${{ github.workspace }} --include-dev-deps --dependency-tree
+
+  sbom:
+    runs-on: 'ubuntu-24.04'
+    steps:
+      - name: Vulnerabilities-SBOM-Syft-Grype
+        run: |
+          echo 'Starting env prep for testing...'
+          sudo apt update && sudo apt install -y gnupg curl wget unzip ca-certificates
+          sudo curl -sSfL https://get.anchore.io/syft | sudo sh -s -- -b /usr/local/bin
+          sudo curl -sSfL https://get.anchore.io/grype | sudo sh -s -- -b /usr/local/bin
+          rm -rf /scans || true
+          sudo mkdir /scans
+          sudo syft ${{ github.workspace }} -o cyclonedx-json=/scans/sbom.json
+          sudo grype sbom:/scans/sbom.json

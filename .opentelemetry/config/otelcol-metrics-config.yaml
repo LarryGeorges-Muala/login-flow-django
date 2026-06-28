@@ -1,0 +1,28 @@
+
+receivers:
+  hostmetrics:
+    collection_interval: 5s
+    scrapers:
+      cpu: {}
+      disk: {}
+      load: {}
+      filesystem: {}
+      memory: {}
+      network: {}
+
+processors:
+  batch:
+
+exporters:
+  otlphttp/prometheus:
+    # Push metrics to Prometheus's OTLP receiver
+    metrics_endpoint: http://host.docker.internal:9090/api/v1/otlp/v1/metrics
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      processors: [batch]
+      exporters: [otlphttp/prometheus]

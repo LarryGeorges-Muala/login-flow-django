@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: 'website-backend-prod'
+spec:
+  destination:
+    name: 'in-cluster'
+    namespace: 'prod'
+  source:
+    path: '.argo-cd/chart'
+    repoURL: 'https://github.com/LarryGeorges-Muala/login-flow-django'
+    targetRevision: HEAD
+    helm:
+      parameters:
+      - name: "super-chart.deployments[0].containers[0].image.tag"
+        value: "$ARGOCD_APP_REVISION"
+      - name: "super-chart.namespace"
+        value: "prod"
+      valueFiles:
+      - values.yaml
+  project: 'default'
+  syncPolicy:
+    retry:
+      refresh: true
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      enabled: false
+      prune: true
+      selfHeal: true
