@@ -93,6 +93,15 @@
             <button class="modal-component-button" type="button" id="update-profile-trigger" onclick="validateProfile()">Change Details</button>
             <button class="modal-component-button" type="button" id="update-password-trigger" onclick="validatePassword()">Change Password</button>
 
+            <div class="password-strength">
+                <div id="message">
+                    <h4>Password must contain the following:</h4>
+                    <p id="letter" class="invalid">A <b>lowercase</b> letter</p>
+                    <p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+                    <p id="number" class="invalid">A <b>number</b></p>
+                    <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+                </div>
+            </div>
             {% if status_message %}<p>{{ status_message }}</p>{% endif %}
         </div>
     </form>
@@ -112,7 +121,7 @@
             <hr />
             <p>Please use your authenticator app <br>(such as Authy or Google Authenticator) <br>to scan this QR code.</p>
             <hr />
-            <img src="{{ mfa.qr_code.url }}" style="max-height: 200px; max-width: 200px;"></li>
+            <img src="{{ mfa.qr_code.url }}" style="max-height: 200px; max-width: 200px;">
             <div class="component-form-container">
                 <label class="label" for="code">Enter the code from your authenticator app:</label><br>
                 <input type="text" id="code" name="code" value="" placeholder=">" required><br>
@@ -127,6 +136,63 @@
 </div>
 
 <script>
+var myInput = document.getElementById("new_password");
+var letter = document.getElementById("letter");
+var capital = document.getElementById("capital");
+var number = document.getElementById("number");
+var length = document.getElementById("length");
+
+// When the user clicks on the password field, show the message box
+myInput.onfocus = function() {
+    document.getElementById("message").style.display = "block";
+}
+// When the user clicks outside of the password field, hide the message box
+myInput.onblur = function() {
+    document.getElementById("message").style.display = "none";
+}
+// When the user starts to type something inside the password field
+myInput.onkeyup = function() {
+  // Validate lowercase letters
+  var lowerCaseLetters = /[a-z]/g;
+  if(myInput.value.match(lowerCaseLetters)) {  
+    letter.classList.remove("invalid");
+    letter.classList.add("valid");
+  } else {
+    letter.classList.remove("valid");
+    letter.classList.add("invalid");
+  }
+  
+  // Validate capital letters
+  var upperCaseLetters = /[A-Z]/g;
+  if(myInput.value.match(upperCaseLetters)) {  
+    capital.classList.remove("invalid");
+    capital.classList.add("valid");
+  } else {
+    capital.classList.remove("valid");
+    capital.classList.add("invalid");
+  }
+
+  // Validate numbers
+  var numbers = /[0-9]/g;
+  if(myInput.value.match(numbers)) {  
+    number.classList.remove("invalid");
+    number.classList.add("valid");
+  } else {
+    number.classList.remove("valid");
+    number.classList.add("invalid");
+  }
+  
+  // Validate length
+  if(myInput.value.length >= 8) {
+    length.classList.remove("invalid");
+    length.classList.add("valid");
+  } else {
+    length.classList.remove("valid");
+    length.classList.add("invalid");
+  }
+}
+
+//
 function validateProfile() {
     var t = document.getElementById("password-show-container");
     var u = document.getElementById("basic-container");
