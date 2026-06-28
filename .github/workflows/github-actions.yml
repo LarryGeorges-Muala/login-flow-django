@@ -9,6 +9,9 @@ jobs:
   code:
     runs-on: 'ubuntu-24.04'
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
