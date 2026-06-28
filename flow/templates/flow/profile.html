@@ -9,7 +9,6 @@
     </div>
     <form action="{% url 'flow:profile' %}" method="post">
         {% csrf_token %}
-        {{ form }}
         <div class="form-group">
             <h2>Login</h2>
             <hr />
@@ -40,7 +39,6 @@
     </form>
     <form action="{% url 'flow:update' %}" method="post">
         {% csrf_token %}
-        {{ form }}
         <div class="form-group">
             <h2>Profile</h2>
             <hr />
@@ -105,7 +103,6 @@
     </form>
     <form action="{% url 'flow:profile' %}" method="post">
         {% csrf_token %}
-        {{ form }}
         <div class="form-group">
             <h2>Two-Factor Authentication</h2>
             <hr />
