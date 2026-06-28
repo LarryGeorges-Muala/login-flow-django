@@ -23,6 +23,10 @@
             </div>
 
             <div class="component-form-container">
+                <input type="checkbox" onclick="showPasswordLogin()"><span class="component-form-password-show">Show Password</span>
+            </div>
+
+            <div class="component-form-container">
                 <input type="submit" value="Submit" class="component-submit-button">
             </div>
             {% if status_message %}<p>{{ status_message }}</p>{% endif %}
@@ -159,6 +163,15 @@ function validatePassword() {
     z.style.display = "block";
     document.getElementById("new_password").setAttribute("required", "");
     document.getElementById("password_confirm").setAttribute("required", "");
+}
+
+function showPasswordLogin() {
+    var x = document.getElementById("password");
+    if (x.type === "password") {
+        x.type = "text";
+    } else {
+        x.type = "password";
+    }
 }
 
 function showPassword() {
