@@ -1,0 +1,201 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'flow/style.css' %}">
+
+{% block content %}
+<div class="section-container">
+    {% if not user.is_authenticated or user.is_anonymous %}
+    <div class="log-links-group">
+        <a href="{% url 'flow:index' %}" class="component-log-button">Register</a>
+    </div>
+    <form action="{% url 'flow:profile' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-group">
+            <h2>Login</h2>
+            <hr />
+            <div class="component-form-container">
+                <label class="label" for="email">Email:</label><br>
+                <input type="email" id="email" name="email" placeholder=">" required><br>
+            </div>
+
+            <div class="component-form-container">
+                <label class="label" for="password">Password:</label><br>
+                <input type="password" id="password" name="password" minlength="8" placeholder=">" required><br>
+            </div>
+
+            <div class="component-form-container">
+                <input type="submit" value="Submit" class="component-submit-button">
+            </div>
+            {% if status_message %}<p>{{ status_message }}</p>{% endif %}
+        </div>
+    </form>
+    {% endif %}
+
+    {% if user.is_authenticated and not user.is_anonymous and not mfa %}
+    <form action="{% url 'flow:logout' %}" method="post">
+        {% csrf_token %}
+        <div class="log-group">
+            <input type="submit" value="Logout" class="component-logout-button">
+        </div>
+    </form>
+    <form action="{% url 'flow:update' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-group">
+            <h2>Profile</h2>
+            <hr />
+            <div id="basic-container">
+                <div class="component-form-container">
+                    <label class="label" for="first_name">First name:</label><br>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" placeholder=">" required><br>
+                </div>
+
+                <div class="component-form-container">
+                    <label class="label" for="last_name">Last name:</label><br>
+                    <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" placeholder=">" required><br>
+                </div>
+
+                <div class="component-form-container">
+                    <label class="label" for="profile">Email:</label><br>
+                    <input type="hidden" name="email" value="{{ user.email }}">
+                    <input type="email" id="profile" name="profile" value="{{ user.email }}" placeholder=">" required><br>
+                </div>
+            </div>
+
+            <div id="password-container" class="component-form-container">
+                <label class="label" for="password">Password:</label><br>
+                <input type="password" id="password" name="password" minlength="8" placeholder=">" required><br>
+            </div>
+
+            <div id="new-password-container">
+                <div class="component-form-container">
+                    <label class="label" for="new_password">New Password:</label><br>
+                    <input type="password" id="new_password" name="new_password" minlength="8" placeholder=">" onchange="matchPasswords()" oninput="matchPasswords()"><br>
+                </div>
+
+                <div class="component-form-container">
+                    <label class="label" for="password_confirm">Confirm New Password:</label><br>
+                    <input type="password" id="password_confirm" name="password_confirm" minlength="8" placeholder=">" onchange="matchPasswords()" oninput="matchPasswords()"><br>
+                    <span id="passwords-matching" class="passwords-match-icons">✔</span><span id="passwords-not-matching" class="passwords-match-icons">✘</span>
+                </div>
+            </div>
+
+            <div id="password-show-container" class="component-form-container">
+                <input type="checkbox" onclick="showPassword()"><span class="component-form-password-show">Show Password</span>
+            </div>
+
+            <div class="component-form-container" id="update-profile-submit">
+                <input type="submit" value="Confirm Update" class="component-submit-button">
+            </div>
+
+            <button class="modal-component-button" type="button" id="update-profile-trigger" onclick="validateProfile()">Change Details</button>
+            <button class="modal-component-button" type="button" id="update-password-trigger" onclick="validatePassword()">Change Password</button>
+
+            {% if status_message %}<p>{{ status_message }}</p>{% endif %}
+        </div>
+    </form>
+    {% endif %}
+
+    {% if user.is_authenticated and not user.is_anonymous and mfa %}
+    <form action="{% url 'flow:logout' %}" method="post">
+        {% csrf_token %}
+        <div class="log-group">
+            <input type="submit" value="Logout" class="component-logout-button">
+        </div>
+    </form>
+    <form action="{% url 'flow:profile' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-group">
+            <h2>Two-Factor Authentication</h2>
+            <hr />
+            <p>Please use your authenticator app <br>(such as Authy or Google Authenticator) <br>to scan this QR code.</p>
+            <hr />
+            <img src="{{ mfa.qr_code.url }}" style="max-height: 200px; max-width: 200px;"></li>
+            <div class="component-form-container">
+                <label class="label" for="code">Enter the code from your authenticator app:</label><br>
+                <input type="text" id="code" name="code" value="" placeholder=">" required><br>
+            </div>
+            <div class="component-form-container">
+                <input type="submit" value="Validate Code" class="component-submit-button">
+            </div>
+            {% if status_message %}<p>{{ status_message }}</p>{% endif %}
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+<script>
+function validateProfile() {
+    var t = document.getElementById("password-show-container");
+    var u = document.getElementById("basic-container");
+    var v = document.getElementById("password-container");
+    var w = document.getElementById("new-password-container");
+    var x = document.getElementById("update-profile-trigger");
+    var y = document.getElementById("update-password-trigger");
+    var z = document.getElementById("update-profile-submit");
+    t.style.display = "block";
+    u.style.display = "block";
+    v.style.display = "block";
+    w.style.display = "none";
+    x.style.display = "none";
+    y.style.display = "block";
+    z.style.display = "block";
+    document.getElementById("new_password").removeAttribute("required");
+    document.getElementById("password_confirm").removeAttribute("required");
+}
+
+function validatePassword() {
+    var t = document.getElementById("password-show-container");
+    var u = document.getElementById("basic-container");
+    var v = document.getElementById("password-container");
+    var w = document.getElementById("new-password-container");
+    var x = document.getElementById("update-profile-trigger");
+    var y = document.getElementById("update-password-trigger");
+    var z = document.getElementById("update-profile-submit");
+    t.style.display = "block";
+    u.style.display = "none";
+    v.style.display = "block";
+    w.style.display = "block";
+    x.style.display = "block";
+    y.style.display = "none";
+    z.style.display = "block";
+    document.getElementById("new_password").setAttribute("required", "");
+    document.getElementById("password_confirm").setAttribute("required", "");
+}
+
+function showPassword() {
+    var x = document.getElementById("password");
+    var y = document.getElementById("new_password");
+    var z = document.getElementById("password_confirm");
+    if (x.type === "password") {
+        x.type = "text";
+        y.type = "text";
+        z.type = "text";
+    } else {
+        x.type = "password";
+        y.type = "password";
+        z.type = "password";
+    }
+}
+
+function matchPasswords() {
+    var x = document.getElementById("new_password").value;
+    var y = document.getElementById("password_confirm").value;
+    var valid_pass = document.getElementById("passwords-matching");
+    var invalid_pass = document.getElementById("passwords-not-matching");
+    if (x != '' && y != '') {
+        if (x === y) {
+            valid_pass.style.display = "block";
+            invalid_pass.style.display = "none";
+        } else {
+            valid_pass.style.display = "none";
+            invalid_pass.style.display = "block";
+        }
+    } else {
+        valid_pass.style.display = "none";
+        invalid_pass.style.display = "none";
+    }
+}
+</script>
+{% endblock %}
