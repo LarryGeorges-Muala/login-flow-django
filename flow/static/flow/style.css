@@ -1,0 +1,231 @@
+body {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.component-form-container,
+.component-general-container,
+.component-textarea-container {
+  margin: 20px;
+  color: black;
+
+  input {
+    min-width: 170px;
+    padding: 10px 30px;
+    margin-top: 10px;
+    font-size: 16px;
+    background-color: white;
+    color: black;
+  }
+
+  label {
+    color: black;
+  }
+}
+
+.label {
+  color: white;
+}
+
+.form-group {
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #808080;
+    max-width: 400px;
+    margin: auto;
+    text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.log-group {
+    padding: 0 20px;
+    border: none;
+    max-width: 400px;
+    margin: 0 auto -17px auto;
+    text-align: right;
+
+  input {
+    min-width: 70px;
+    padding: 10px 30px;
+    margin-top: 0px;
+    font-size: 16px;
+    background-color: white;
+    color: black;
+  }
+
+  a {
+    text-decoration: none;
+    background-color: white;
+    color: #000;
+    min-width: 70px;
+    padding: 10px 30px;
+    margin-top: 0px;
+    font-size: 16px;
+  }
+}
+
+.log-links-group {
+    padding: 0 20px;
+    border: none;
+    max-width: 400px;
+    /* margin: 0 auto -17px auto; */
+    margin: 0 auto 10px auto;
+    text-align: right;
+
+  input {
+    min-width: 70px;
+    padding: 10px 30px;
+    margin-top: 0px;
+    font-size: 16px;
+    background-color: white;
+    color: black;
+  }
+
+  a {
+    text-decoration: none;
+    background-color: white;
+    color: #000;
+    min-width: 70px;
+    padding: 10px 30px;
+    margin-top: 0px;
+    font-size: 16px;
+  }
+}
+
+
+.component-submit-button {
+  border: 1px solid #808080;
+  transition-duration: 0.4s;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.component-submit-button:hover {
+  cursor: pointer;
+  background-color: #04AA6D;
+}
+
+.component-logout-button, .component-log-button {
+  border: 1px solid #808080;
+  border-radius: 5px 5px 0 0;
+  transition-duration: 0.4s;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.component-logout-button:hover, .component-log-button:hover {
+  cursor: pointer;
+  background-color: #a52a2a;
+}
+
+.modal-component-button,
+.modal-component-close-button,
+.modal-component-alternative-button {
+  border: 1px solid #808080;
+  color: black;
+  padding: 10px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 16px;
+  margin: 30px auto;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.modal-component-button:hover,
+.modal-component-close-button:hover,
+.modal-component-alternative-button:hover {
+  background-color: #04AA6D;
+}
+
+.modal-component-red-hover:hover {
+  background-color: #a52a2a;
+}
+
+#password-container, #update-profile-submit, #new-password-container, #password-show-container, #passwords-matching, #passwords-not-matching {
+  display: none;
+  transition-duration: 0.4s;
+}
+
+.section-container {
+  margin-top: 100px;
+}
+
+.component-form-password-show {
+  margin-left: -70px;
+}
+
+.passwords-match-icons {
+  margin-right: -190px;
+  margin-top: -30px;
+  padding-bottom: 11.5px;
+}
+
+.password-strength {
+  /* Style all input fields */
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+  }
+
+  /* Style the submit button */
+  input[type=submit] {
+    background-color: #04AA6D;
+    color: white;
+  }
+
+  /* Style the container for inputs */
+  .container {
+    background-color: #f1f1f1;
+    padding: 20px;
+  }
+
+  /* The message box is shown when the user clicks on the password field */
+  #message {
+    display:none;
+    background: #f1f1f1;
+    color: #000;
+    position: relative;
+    padding: 20px;
+    margin-top: 10px;
+  }
+
+  #message p {
+    padding: 10px 35px;
+    font-size: 16px;
+  }
+
+  .valid, .invalid {
+    text-align: left;
+    margin-left: 50px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+
+  /* Add a green text color and a checkmark when the requirements are right */
+  .valid {
+    color: green;
+  }
+
+  .valid:before {
+    position: relative;
+    left: -35px;
+    content: "✔";
+  }
+
+  /* Add a red text color and an "x" when the requirements are wrong */
+  .invalid {
+    color: red;
+  }
+
+  .invalid:before {
+    position: relative;
+    left: -35px;
+    content: "✖";
+  }
+}
